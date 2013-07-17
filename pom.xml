@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>stackdriver-custommetrics</groupId>
 	<artifactId>stackdriver-custommetrics</artifactId>
-	<version>0.1</version>
+	<version>0.2</version>
 	<name>Stackdriver Custom Metrics Publisher</name>
 	<description>Sends custom metrics to Stackdriver via HTTP</description>
 	<build>
@@ -28,27 +28,6 @@
 		</plugins>
 	</build>
 	<dependencies>
-		 <!-- the core, which includes Streaming API, shared low-level abstractions (but NOT data-binding) -->
-		 <dependency>
-		 	<groupId>com.fasterxml.jackson.core</groupId>
-		 	<artifactId>jackson-core</artifactId>
-		 	<version>2.2.2</version>
-		 </dependency>
-		
-		 <!-- Just the annotations; use this dependency if you want to attach annotations
-		      to classes without connecting them to the code. -->
-		 <dependency>
-			 <groupId>com.fasterxml.jackson.core</groupId>
-			 <artifactId>jackson-annotations</artifactId>
-			 <version>2.2.2</version>
-		</dependency>
-		
-		<!-- databinding; ObjectMapper, JsonNode and related classes are here -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.2.2</version>
-		</dependency>
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>

@@ -3,9 +3,6 @@ package com.stackdriver.api.custommetrics;
 import java.util.Date;
 import java.util.logging.Logger;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Contains information about a single data point for a custom metric.
  * <br/>
@@ -33,32 +30,26 @@ public class DataPoint {
 		this.collectedAt = collectedAt;
 	}
 
-	@JsonProperty("name")
 	public String getName() {
 		return name;
 	}
 
-	@JsonProperty("name")
 	public void setName(final String name) {
 		this.name = name;
 	}
 
-	@JsonProperty("value")
 	public double getValue() {
 		return this.value;
 	}
 
-	@JsonProperty("value")
 	public void setValue(final double value) {
 		this.value = value;
 	}
 
-	@JsonIgnore
 	public Date getCollectedAt() {
 		return this.collectedAt;
 	}
 
-	@JsonIgnore
 	public void setCollectedAt(final Date collectedAt) {
 		this.collectedAt = collectedAt;
 	}
@@ -69,7 +60,6 @@ public class DataPoint {
 	 * 
 	 * @return an int with the Unix timestamp, or 0 if not defined
 	 */
-	@JsonProperty("collected_at")
 	public long getCollectedAtEpoch() {
 		if (this.collectedAt == null) {
 			throw new IllegalStateException("collectedAt must be set, can't get as epoch");
@@ -84,9 +74,20 @@ public class DataPoint {
 	 * @param collectedAtEpoch
 	 *            timestamp in Unix timestamp format
 	 */
-	@JsonProperty("collected_at")
 	public void setCollectedAtEpoch(final long collectedAtEpoch) {
 		long millis = collectedAtEpoch * 1000;
 		this.collectedAt = new Date(millis);
+	}
+	
+	/**
+	 * Serialize this object to JSON string, so we don't need a Jackson dependency in the project
+	 * <br/>
+	 * Not super robust about special characters, so please don't use them in your names/values
+	 * (quotes/brackets/braces etc) or the gateway will give you a 400 for invalid JSON.
+	 * 
+	 * @return a String in JSON format representing this object
+	 */
+	public String toJson() {
+		return String.format("{\"name\":\"%s\",\"value\":%f,\"collected_at\":%d}", this.getName(), this.getValue(), this.getCollectedAtEpoch());
 	}
 }

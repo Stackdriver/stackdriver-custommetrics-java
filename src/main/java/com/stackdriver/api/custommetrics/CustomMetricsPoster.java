@@ -8,11 +8,7 @@ import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.logging.Logger;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * As the name suggests, this class is used to post custom metrics about your infrastructure, services, or application
@@ -36,8 +32,6 @@ public class CustomMetricsPoster {
 	private URL endpointUrl;
 
 	private Proxy proxy;
-
-	private ObjectMapper jacksonOm;
 
 	/**
 	 * Basic constructor, most applications will use this. Posts to the Stackdriver default custom metrics endpoint
@@ -122,9 +116,6 @@ public class CustomMetricsPoster {
 			LOGGER.severe("Invalid endpoint URL supplied " + endpointUrl);
 			throw new IllegalArgumentException("Endpoint URL passed to a StackdriverCustomMetricsPoster must be a valid URL, pass null to use the default");
 		}
-
-		// initialize Jackson
-		this.jacksonOm = new ObjectMapper();
 	}
 
 	/**
@@ -134,7 +125,6 @@ public class CustomMetricsPoster {
 	 * @param message
 	 *            GatewayMessage object with one or more DataPoint objects in it
 	 * 
-	 * @throws JsonProcessingException
 	 */
 	public void sendMetrics(final CustomMetricsMessage message) {
 		this.sendMetrics(message, false);
@@ -147,7 +137,6 @@ public class CustomMetricsPoster {
 	 * @param message
 	 *            GatewayMessage object with one or more DataPoint objects in it
 	 * 
-	 * @throws JsonProcessingException
 	 */
 	public void sendMetricsLocal(final CustomMetricsMessage message) {
 		this.sendMetrics(message, true);
@@ -163,24 +152,18 @@ public class CustomMetricsPoster {
 			throw new IllegalArgumentException("message for postMetricsToGateway must contain one or more data points");
 		}
 
-		try {
-			// serialize message to JSON
-			String messageJson = this.jacksonOm.writeValueAsString(message);
+		// serialize message to JSON
+		String messageJson = message.toJson();
 
-			if (localMode) {
-				LOGGER.info("sendMetrics called in local mode, received message:");
-				LOGGER.info(messageJson);
-			} else {
-				// post message to HTTP
-				LOGGER.fine("sendMetrics called in remote mode, message ready for gateway:");
-				LOGGER.fine(messageJson);
-				
-				this.postMetricMessageToGateway(messageJson);
-			}
-
-		} catch (JsonProcessingException e) {
-			LOGGER.severe("error converting the message to JSON " + e.toString());
-			// TODO: Exception for errors writing JSON from message, should be uncommon
+		if (localMode) {
+			LOGGER.info("sendMetrics called in local mode, received message:");
+			LOGGER.info(messageJson);
+		} else {
+			// post message to HTTP
+			LOGGER.fine("sendMetrics called in remote mode, message ready for gateway:");
+			LOGGER.fine(messageJson);
+			
+			this.postMetricMessageToGateway(messageJson);
 		}
 	}
 

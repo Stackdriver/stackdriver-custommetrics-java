@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Contains the information needed for a Stackdriver gateway message.  Included
  * are one or more data points, a protocol version, and a timestamp.
@@ -38,7 +36,6 @@ public class CustomMetricsMessage {
 	 * 
 	 * @return a unix timestamp representing the creation time of this object
 	 */
-	@JsonProperty("timestamp")
 	public long getTimestamp() {
 		return timestamp;
 	}
@@ -50,7 +47,6 @@ public class CustomMetricsMessage {
 	 * 
 	 * @return the current protocol version.
 	 */
-	@JsonProperty("proto_version")
 	public int getProtocolVersion() {
 		return PROTOCOL_VERSION;
 	}
@@ -60,7 +56,6 @@ public class CustomMetricsMessage {
 	 * 
 	 * @return List of DataPoint objects
 	 */
-	@JsonProperty("data")
 	public List<DataPoint> getDataPoints() {
 		return dataPoints;
 	}
@@ -70,7 +65,6 @@ public class CustomMetricsMessage {
 	 * 
 	 * @param dataPoints List of DataPoint objects
 	 */
-	@JsonProperty("data")
 	public void setDataPoints(final List<DataPoint> dataPoints) {
 		this.dataPoints = dataPoints;
 	}
@@ -82,5 +76,31 @@ public class CustomMetricsMessage {
 	 */
 	public void addDataPoint(final DataPoint dataPoint) {
 		this.dataPoints.add(dataPoint);
+	}
+	
+	/**
+	 * Serialize this object to JSON string, so we don't need a Jackson dependency in the project
+	 * <br/>
+	 * Not super robust about special characters, so please don't use them in your names/values
+	 * (quotes/brackets/braces etc) or the gateway will give you a 400 for invalid JSON.
+	 * 
+	 * @return a String in JSON format representing this object and nested data points
+	 */
+	public String toJson() {
+		StringBuilder jsonBuilder = new StringBuilder();
+		jsonBuilder.append("{");
+		jsonBuilder.append(String.format("\"timestamp\":%d,", this.getTimestamp()));
+		jsonBuilder.append(String.format("\"proto_version\":%d,", this.getProtocolVersion()));
+		jsonBuilder.append("\"data\":[");
+		int pointsCount = 0;
+		for (DataPoint point: this.getDataPoints()) {
+			if (pointsCount++ > 0) {
+				jsonBuilder.append(',');
+			}
+			jsonBuilder.append(point.toJson());
+		}
+		jsonBuilder.append("]");
+		jsonBuilder.append("}");
+		return jsonBuilder.toString();
 	}
 }
