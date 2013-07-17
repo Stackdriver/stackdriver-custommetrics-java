@@ -3,7 +3,7 @@ stackdriver-custommetrics-java
 
 This project contains a library for use in Java applications to post custom metrics to Stackdriver using our https gateway.
 
-[Custom Metrics Guide][http://feedback.stackdriver.com/knowledgebase/articles/181488-sending-custom-metrics-to-the-stackdriver-system]
+[Stackdriver Custom Metrics Guide](http://feedback.stackdriver.com/knowledgebase/articles/181488-sending-custom-metrics-to-the-stackdriver-system)
 
 
 ## Examples
