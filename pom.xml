@@ -2,7 +2,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>stackdriver-custommetrics</groupId>
 	<artifactId>stackdriver-custommetrics</artifactId>
-	<version>0.2</version>
+	<version>0.3</version>
+	<packaging>jar</packaging>
 	<name>Stackdriver Custom Metrics Publisher</name>
 	<description>Sends custom metrics to Stackdriver via HTTP</description>
 	<build>
@@ -25,7 +26,12 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+			</plugin>
 		</plugins>
+		
 	</build>
 	<dependencies>
 		<dependency>

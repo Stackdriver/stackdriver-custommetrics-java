@@ -8,6 +8,7 @@ import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.Date;
 import java.util.logging.Logger;
 
 /**
@@ -32,6 +33,8 @@ public class CustomMetricsPoster {
 	private URL endpointUrl;
 
 	private Proxy proxy;
+	
+	private boolean localMode = false;
 
 	/**
 	 * Basic constructor, most applications will use this. Posts to the Stackdriver default custom metrics endpoint
@@ -42,6 +45,16 @@ public class CustomMetricsPoster {
 	 */
 	public CustomMetricsPoster(final String apiKey) {
 		this(apiKey, null, -1, null);
+	}
+	
+	/**
+	 * 
+	 * Simplest constructor, makes the sender in local mode that will just log. 
+	 * <br/>
+	 * See the version with API key if you actually want the messages to be sent
+	 */
+	public CustomMetricsPoster() {
+		this.localMode = true;
 	}
 
 	/**
@@ -119,30 +132,80 @@ public class CustomMetricsPoster {
 	}
 
 	/**
-	 * This is the method that does the posting. It serializes your message to JSON and posts it to the Stackdriver
-	 * endpoint.
+	 * Simple version of sending a custom metric point not tied to an instance.  Assumes the collected_at to be now in this version.
 	 * 
-	 * @param message
-	 *            GatewayMessage object with one or more DataPoint objects in it
+	 * @param metricName name of your custom metric
+	 * @param value metric value to report
 	 * 
+	 * @return this object so these calls can be chained for sending more than one at a time
 	 */
-	public void sendMetrics(final CustomMetricsMessage message) {
-		this.sendMetrics(message, false);
+	public CustomMetricsPoster sendMetricDataPoint(final String metricName, final double value) {
+		return this.sendMetricDataPointInternal(metricName, value, new Date(System.currentTimeMillis()), null);
 	}
 	
 	/**
-	 * Test version of the metric poster that performs the usual validation but writes to the log instead of the 
-	 * Stackdriver endpoint, so the metrics won't really be sent.
+	 * Simple version of sending a custom metric point tied to an instance.  Assumes the collected_at to be now in this version.
+	 *
+	 * @param metricName name of your custom metric
+	 * @param value metric value to report
+	 * @param instanceId String with the ID of the instance that this metric value will be bound to
 	 * 
-	 * @param message
-	 *            GatewayMessage object with one or more DataPoint objects in it
-	 * 
+	 * @return this object so these calls can be chained for sending more than one at a time
 	 */
-	public void sendMetricsLocal(final CustomMetricsMessage message) {
-		this.sendMetrics(message, true);
+	public CustomMetricsPoster sendInstanceMetricDataPoint(final String metricName, final double value, final String instanceId) {
+		return this.sendMetricDataPointInternal(metricName, value, new Date(System.currentTimeMillis()), instanceId);
 	}
 	
-	public void sendMetrics(final CustomMetricsMessage message, final boolean localMode) {
+	/**
+	 * Simple version of sending a custom metric point not tied to an instance, with a collected_at timestamp other than right now
+	 * 
+	 * @param metricName name of your custom metric
+	 * @param value metric value to report
+	 * @param collectedAt Date object for when the observation occurred, useful for sending after the fact 
+	 *
+	 * @return this object so these calls can be chained for sending more than one at a time
+	 */
+	public CustomMetricsPoster sendMetricDataPoint(final String metricName, final double value, final Date collectedAt) {
+		return this.sendMetricDataPointInternal(metricName, value, collectedAt, null);
+	}
+	
+	/**
+	 * Simple version of sending a metric tied to an instance with a collected_at timestamp other than right now
+	 *
+ 	 * @param metricName name of your custom metric
+	 * @param value metric value to report
+	 * @param collectedAt Date object for when the observation occurred, useful for sending after the fact 
+	 * @param instanceId String with the ID of the instance this metric value will be bound to
+	 * 
+	 * @return this object so these calls can be chained for sending more than one at a time
+	 */
+	public CustomMetricsPoster sendInstanceMetricDataPoint(final String metricName, final double value, final Date collectedAt, final String instanceId) {
+		return this.sendMetricDataPointInternal(metricName, value, collectedAt, instanceId);
+	}
+	
+	/**
+	 * Internal method to actually wrap up and send the custom metrics
+	 */
+	CustomMetricsPoster sendMetricDataPointInternal(final String metricName, final double value, final Date collectedAt, final String instanceId) {
+		DataPoint point = null;
+		
+		if (instanceId == null) {
+			point = new DataPoint(metricName, value, collectedAt);
+		} else {
+			point = new InstanceDataPoint(metricName, value, collectedAt, instanceId);
+		}
+		CustomMetricsMessage message = new CustomMetricsMessage();
+		message.addDataPoint(point);
+		this.sendMetrics(message);
+		return this;
+	}
+	
+	/**
+	 * This is the method that does the posting. It serializes your message to JSON and posts it to the Stackdriver
+	 * endpoint or to logger, depending on how this.localMode has been set
+	 * 
+	 */
+	public void sendMetrics(final CustomMetricsMessage message) {
 		// check the message
 		if (message == null) {
 			LOGGER.severe("can't send metrics, message is missing");
@@ -155,7 +218,7 @@ public class CustomMetricsPoster {
 		// serialize message to JSON
 		String messageJson = message.toJson();
 
-		if (localMode) {
+		if (this.isLocalMode()) {
 			LOGGER.info("sendMetrics called in local mode, received message:");
 			LOGGER.info(messageJson);
 		} else {
@@ -219,5 +282,13 @@ public class CustomMetricsPoster {
 				urlConnection.disconnect();
 			}
 		}
+	}
+
+	public boolean isLocalMode() {
+		return localMode;
+	}
+
+	public void setLocalMode(boolean localMode) {
+		this.localMode = localMode;
 	}
 }

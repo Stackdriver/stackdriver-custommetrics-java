@@ -20,8 +20,13 @@ public class CustomMetricsTests {
 		DataPoint point = new DataPoint(TEST_METRIC_NAME, 0.0, new Date(pointTime));
 		CustomMetricsMessage message = new CustomMetricsMessage();
 		message.addDataPoint(point);
-		CustomMetricsPoster metricsPoster = new CustomMetricsPoster(TEST_API_KEY);
-		metricsPoster.sendMetricsLocal(message);
+		CustomMetricsPoster metricsPoster = new CustomMetricsPoster(); // no params, local mode
+		metricsPoster.sendMetrics(message);
+	}
+	
+	@Test
+	public void testSendPointShortFormLocal() {
+		new CustomMetricsPoster().sendMetricDataPoint(TEST_METRIC_NAME, 0.0);
 	}
 	
 	@Test
