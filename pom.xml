@@ -6,6 +6,26 @@
 	<packaging>jar</packaging>
 	<name>Stackdriver Custom Metrics Publisher</name>
 	<description>Sends custom metrics to Stackdriver via HTTP</description>
+	<url>http://www.stackdriver.com</url>
+  	<licenses>
+    	<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<url>https://github.com/Stackdriver/stackdriver-custommetrics-java</url>
+		<connection>scm:git:git@github.com:Stackdriver/stackdriver-custommetrics-java.git</connection>
+		<developerConnection>scm:git:git@github.com:Stackdriver/stackdriver-custommetrics-java.git</developerConnection>
+	</scm>
+	<developers>
+		<developer>
+			<id>ekilby</id>
+			<name>Eric Kilby</name>
+			<email>eric@stackdriver.com</email>
+		</developer>
+	</developers>
 	<build>
 		<directory>target</directory>
 		<outputDirectory>target/classes</outputDirectory>
