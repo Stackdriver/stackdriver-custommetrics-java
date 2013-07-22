@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.stackdriver</groupId>
 	<artifactId>stackdriver-custommetrics</artifactId>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.3</version>
 	<packaging>jar</packaging>
 	<name>Stackdriver Custom Metrics Publisher</name>
 	<description>Sends custom metrics to Stackdriver via HTTP</description>
