@@ -6,6 +6,17 @@ This project contains a library for use in Java applications to post custom metr
 [Stackdriver Custom Metrics Guide](http://feedback.stackdriver.com/knowledgebase/articles/181488-sending-custom-metrics-to-the-stackdriver-system)
 
 
+## Adding to Your Maven Project
+Releases of this project are available via Maven Central.  Here's how to import the 0.3 release
+
+```
+<dependency>
+	<groupId>com.stackdriver</groupId>
+	<artifactId>stackdriver-custommetrics</artifactId>
+	<version>0.3</version>
+</dependency>
+```
+
 ## Examples
 Here are some examples for how to use this code in your projects.  The package import is `com.stackdriver.api.custommetrics` and the main
 class is `CustomMetricsPoster`.  Items in ALL CAPS below are meant to be placeholders for your values and will need to be substituted.
