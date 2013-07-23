@@ -9,7 +9,7 @@ This project contains a library for use in Java applications to post custom metr
 ## Adding to Your Maven Project
 Releases of this project are available via Maven Central.  Here's how to import the 0.3 release
 
-```
+```xml
 <dependency>
 	<groupId>com.stackdriver</groupId>
 	<artifactId>stackdriver-custommetrics</artifactId>
@@ -32,36 +32,36 @@ COLLECTED_AT_DATE - Java Date object that indicates when the observation took pl
 
 CURRENT_INSTANCE_ID - AWS or Rackspace Cloud instance ID for the instance that the metric applies to, when applicable  
 
-```
+```java
 import com.stackdriver.api.custommetrics.CustomMetricsPoster
 ```
 
 ### Sending a custom metric value, not tied to an instance, collected now
-```
+```java
 new CustomMetricsPoster(YOUR_API_KEY).sendMetricDataPoint(YOUR_METRIC_NAME, POINT_VALUE);
 
 ```
 
 ### Sending multiple metrics, all collected now
-```
+```java
 new CustomMetricsPoster(YOUR_API_KEY).sendMetricDataPoint(YOUR_METRIC_NAME, POINT_VALUE).sendMetricDataPoint(SECOND_METRIC_NAME, SECOND POINT VALUE);
 
 ```
 
 ### Sending a custom metric value, tied to an instance, collected now
-```
+```java
 new CustomMetricsPoster(YOUR_API_KEY).sendInstanceMetricDataPoint(YOUR_METRIC_NAME, POINT_VALUE, CURRENT_INSTANCE_ID);
 
 ```
 
 ### Sending a custom metric value, not tied to an instance, collected now
-```
+```java
 new CustomMetricsPoster(YOUR_API_KEY).sendMetricDataPoint(YOUR_METRIC_NAME, POINT_VALUE, COLLECTED_AT_DATE);
 
 ```
 
 ### Sending a custom metric value, tied to an instance, collected at some past time
-```
+```java
 new CustomMetricsPoster(YOUR_API_KEY).sendInstanceMetricDataPoint(YOUR_METRIC_NAME, POINT_VALUE, COLLECTED_AT_DATE, CURRENT_INSTANCE_ID);
 
 ```
